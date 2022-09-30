@@ -37,7 +37,8 @@ namespace DripGuide.Models
 
             modelBuilder.Entity<Comment>().HasOne(u => u.PostNavigation)
                 .WithMany(p => p.Comments)
-                .HasForeignKey(u => u.PostId);
+                .HasForeignKey(u => u.PostId)
+                .OnDelete(DeleteBehavior.Cascade);
 
 
             modelBuilder.Entity<Post>().ToTable("Post");
@@ -47,7 +48,6 @@ namespace DripGuide.Models
             modelBuilder.Entity<Post>().Property(u => u.Description).HasColumnType("nvarchar(500)");
             modelBuilder.Entity<Post>().Property(u => u.Description2).HasColumnType("nvarchar(300)");
             modelBuilder.Entity<Post>().Property(u => u.FK_User).HasColumnType("int");
-            //modelBuilder.Entity<Post>().HasIndex(e => e.FK_User, "fk_user");
             modelBuilder.Entity<Post>().Property(u => u.FK_Brand).HasColumnType("nvarchar(100)");
             modelBuilder.Entity<Post>().Property(u => u.SubmitDate).HasColumnType("datetime");
             modelBuilder.Entity<Post>().Property(u => u.Status).HasColumnType("int");

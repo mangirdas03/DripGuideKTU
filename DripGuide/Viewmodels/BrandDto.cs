@@ -1,10 +1,9 @@
-﻿using System.Text.Json.Serialization;
+﻿using DripGuide.Models;
 
-namespace DripGuide.Models
+namespace DripGuide.Viewmodels
 {
-    public class Brand
+    public class BrandDto
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public DateTime EstablishmentDate { get; set; }
@@ -12,7 +11,5 @@ namespace DripGuide.Models
         public string Headquarters { get; set; }
         public string Image { get; set; }
 
-        [JsonIgnore]
-        public virtual ICollection<Post> Posts { get; set; }
     }
 }

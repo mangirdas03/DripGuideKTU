@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DripGuide.Viewmodels
 {
-    public class PostDTO
+    public class PostDto
     {
         public string Title { get; set; }
 
