@@ -78,7 +78,7 @@ namespace DripGuide.Controllers
         // UPDATE ITEM
         [Route("/api/Posts/confirm/{id}")]
         [HttpPost]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] PostDTO post)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] PostDto post)
         {
             try
             {
@@ -127,7 +127,7 @@ namespace DripGuide.Controllers
 
         // POST (submit new item)
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] PostDTO post)
+        public async Task<IActionResult> Post([FromBody] PostDto post)
         {
             try
             {
@@ -175,13 +175,16 @@ namespace DripGuide.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var post = await _context.Posts.FirstOrDefaultAsync(e => e.Id.Equals(id));
-            if (post != null)
+
+            if(post == null)
             {
-                _context.Posts.Remove(post);
-                await _context.SaveChangesAsync();
-                return Ok("Post removed.");
+                return NotFound("Post not found.");
             }
-            else return NotFound("Post not found.");
+            
+            _context.Posts.Remove(post);
+            await _context.SaveChangesAsync();
+
+            return Ok("Post removed.");
         }
     }
 }

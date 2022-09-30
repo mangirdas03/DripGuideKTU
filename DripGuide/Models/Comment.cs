@@ -1,4 +1,6 @@
-﻿namespace DripGuide.Models
+﻿using System.Text.Json.Serialization;
+
+namespace DripGuide.Models
 {
     public class Comment
     {
@@ -12,6 +14,8 @@
 
 
         public int PostId { get; set; }
+
+        [JsonIgnore]
         public virtual Post PostNavigation { get; set; }
     }
 }
