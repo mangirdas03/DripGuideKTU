@@ -26,5 +26,8 @@ namespace DripGuide.Viewmodels
         public string FK_Brand { get; set; }
 
         public string Image { get; set; }
+
+
+        public int BrandId { get; set; }
     }
 }
