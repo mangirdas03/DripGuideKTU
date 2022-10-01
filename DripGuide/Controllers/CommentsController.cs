@@ -1,9 +1,7 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DripGuide.Models;
 using DripGuide.Viewmodels;
-using System.Drawing.Drawing2D;
 
 namespace DripGuide.Controllers
 {
@@ -37,6 +35,18 @@ namespace DripGuide.Controllers
             }
 
             return comment;
+        }
+
+        // GET: api/Comments/Post
+        [HttpGet("/Post/{id}")]
+        public async Task<ActionResult<IEnumerable<Comment>>> GetCommentsByPostId(int id)
+        {
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+            return await _context.Comments.Where(c => c.Id == id).ToListAsync();
         }
 
         // PUT: api/Comments/5
