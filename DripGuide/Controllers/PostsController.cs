@@ -77,11 +77,16 @@ namespace DripGuide.Controllers
 
         // UPDATE ITEM
         [Route("/api/Posts/confirm/{id}")]
-        [HttpPost]
+        [HttpPut]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] PostDto post)
         {
             try
             {
+                if (post == null)
+                {
+                    return BadRequest();
+                }
+
                 //var jwt = Request.Cookies["jwt"];
                 //if (jwt == null)
                 //    return Unauthorized();
@@ -105,9 +110,10 @@ namespace DripGuide.Controllers
                     existingPost.FK_User = userId;
                     existingPost.Image = post.Image;
                     existingPost.SubmitDate = DateTime.Now;
+                    existingPost.BrandId = post.BrandId;
                     _context.Posts.Update(existingPost);
                     await _context.SaveChangesAsync();
-                    return Ok("Post confirmed.");
+                    return Ok("Post updated.");
                 }
                 else return NotFound("Post not found.");
             }
@@ -131,6 +137,11 @@ namespace DripGuide.Controllers
         {
             try
             {
+                if(post == null)
+                {
+                    return BadRequest();
+                }
+
                 //var jwt = Request.Cookies["jwt"];
                 //if (jwt == null)
                 //    return Unauthorized();
@@ -157,7 +168,8 @@ namespace DripGuide.Controllers
                     FK_User = userId,
                     SubmitDate = DateTime.Now,
                     Status = status,
-                    FK_Brand = post.FK_Brand
+                    FK_Brand = post.FK_Brand,
+                    BrandId = post.BrandId
                 };
                 _context.Posts.Add(newPost);
                 await _context.SaveChangesAsync();

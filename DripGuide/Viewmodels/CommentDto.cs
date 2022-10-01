@@ -6,8 +6,6 @@
 
         public int User { get; set; }
 
-        public DateTime SubmitTime { get; set; }
-
 
         public int PostId { get; set; }
     }

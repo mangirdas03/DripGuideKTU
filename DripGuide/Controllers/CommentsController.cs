@@ -38,7 +38,7 @@ namespace DripGuide.Controllers
         }
 
         // GET: api/Comments/Post
-        [HttpGet("/Post/{id}")]
+        [HttpGet("Post/{id}")]
         public async Task<ActionResult<IEnumerable<Comment>>> GetCommentsByPostId(int id)
         {
             if (id == 0)
@@ -46,7 +46,7 @@ namespace DripGuide.Controllers
                 return NotFound();
             }
 
-            return await _context.Comments.Where(c => c.Id == id).ToListAsync();
+            return await _context.Comments.Where(c => c.PostId == id).ToListAsync();
         }
 
         // PUT: api/Comments/5
@@ -61,10 +61,6 @@ namespace DripGuide.Controllers
             }
 
             comment.Text = commentUpdate.Text;
-            comment.PostId = commentUpdate.PostId;
-            comment.User = commentUpdate.User;
-            comment.SubmitTime = commentUpdate.SubmitTime;
-
             _context.Entry(comment).State = EntityState.Modified;
 
             try
@@ -90,7 +86,7 @@ namespace DripGuide.Controllers
         [HttpPost]
         public async Task<ActionResult<Comment>> PostComment(CommentDto comment)
         {
-            if (comment == null)
+            if (comment == null || !await _context.Posts.AnyAsync(e => e.Id == comment.PostId))
             {
                 return BadRequest();
             }
@@ -100,7 +96,7 @@ namespace DripGuide.Controllers
                 Text = comment.Text,
                 PostId = comment.PostId,
                 User = comment.User,
-                SubmitTime = comment.SubmitTime
+                SubmitTime = DateTime.Now
             };
 
             _context.Comments.Add(newComment);
