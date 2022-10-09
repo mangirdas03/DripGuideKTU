@@ -39,7 +39,7 @@ namespace DripGuide.Controllers
 
         // PUT: api/Brands/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, BrandDto brandUpdate)
+        public async Task<IActionResult> Update(int id, BrandUpdateDto brandUpdate)
         {
             var brand = await _context.Brands.FindAsync(id);
 
@@ -48,12 +48,12 @@ namespace DripGuide.Controllers
                 return BadRequest(); 
             }
 
-            brand.Name = brandUpdate.Name;
-            brand.Description = brandUpdate.Description;
-            brand.Founder = brandUpdate.Founder;
-            brand.Image = brandUpdate.Image;
-            brand.Headquarters = brandUpdate.Headquarters;
-            brand.EstablishmentDate = brandUpdate.EstablishmentDate;
+            brand.Name = brandUpdate.Name ?? brand.Name;
+            brand.Description = brandUpdate.Description ?? brand.Description;
+            brand.Founder = brandUpdate.Founder ?? brand.Founder;
+            brand.Image = brandUpdate.Image ?? brand.Image;
+            brand.Headquarters = brandUpdate.Headquarters ?? brand.Headquarters;
+            brand.EstablishmentDate = brandUpdate.EstablishmentDate ?? brand.EstablishmentDate;
 
             _context.Entry(brand).State = EntityState.Modified;
 
@@ -73,7 +73,7 @@ namespace DripGuide.Controllers
                 }
             }
 
-            return Ok();
+            return Ok(brand);
         }
 
         // POST: api/Brands
@@ -121,7 +121,7 @@ namespace DripGuide.Controllers
             _context.Brands.Remove(brand);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(brand);
         }
 
         private bool BrandExists(int id)
