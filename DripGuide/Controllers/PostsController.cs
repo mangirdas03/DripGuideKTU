@@ -56,6 +56,9 @@ namespace DripGuide.Controllers
                 posts = await _context.Posts.Where(e => !e.Status.Equals(0)).OrderBy(e => e.Title).Skip(itemsPerPage * (pageNumber - 1)).Take(itemsPerPage).ToListAsync();
             }
 
+            if (posts.Count == 0)
+                return BadRequest();
+
             return Ok(posts);
         }
 
@@ -75,10 +78,31 @@ namespace DripGuide.Controllers
             return Ok(posts);
         }
 
+        // GET: api/Comments/Post
+        [HttpGet("{id}/Comments")]
+        public async Task<ActionResult<IEnumerable<Comment>>> GetCommentsByPostId(int id)
+        {
+            var postExists = await _context.Posts.AnyAsync(p => p.Id == id);
+            
+            if (!postExists)
+            {
+                return NotFound();
+            }
+
+            var comments = await _context.Comments.Where(c => c.PostId == id).ToListAsync();
+            if (comments.Count == 0)
+            {
+                return NoContent();
+            }
+
+            return Ok(comments);
+        }
+
+
         // UPDATE ITEM
         [Route("/api/Posts/confirm/{id}")]
         [HttpPut]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] PostDto post)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] PostUpdateDto post)
         {
             try
             {
@@ -86,6 +110,15 @@ namespace DripGuide.Controllers
                 {
                     return BadRequest();
                 }
+
+                if(post.BrandId != null)
+                {
+                    if (!await _context.Brands.AnyAsync(b => b.Id == post.BrandId))
+                    {
+                        return BadRequest();
+                    }
+                }
+                
 
                 //var jwt = Request.Cookies["jwt"];
                 //if (jwt == null)
@@ -98,22 +131,20 @@ namespace DripGuide.Controllers
                 if (existingPost != null)
                 {
                     existingPost.Status = 1;
-                    existingPost.Title = post.Title;
-                    existingPost.Description = post.Description;
-                    existingPost.Description2 = post.Description2;
-                    existingPost.Price = post.Price;
-                    existingPost.Material = post.Material;
-                    existingPost.ReleaseDate = post.ReleaseDate;
-                    existingPost.StyleCode = post.StyleCode;
-                    existingPost.Colorway = post.Colorway;
-                    existingPost.FK_Brand = post.FK_Brand;
-                    existingPost.FK_User = userId;
-                    existingPost.Image = post.Image;
-                    existingPost.SubmitDate = DateTime.Now;
-                    existingPost.BrandId = post.BrandId;
+                    existingPost.Title = post.Title ?? existingPost.Title;
+                    existingPost.Description = post.Description ?? existingPost.Description;
+                    existingPost.Description2 = post.Description2 ?? existingPost.Description;
+                    existingPost.Price = post.Price ?? existingPost.Price;
+                    existingPost.Material = post.Material ?? existingPost.Material;
+                    existingPost.ReleaseDate = post.ReleaseDate ?? existingPost.ReleaseDate;
+                    existingPost.StyleCode = post.StyleCode ?? existingPost.StyleCode;
+                    existingPost.Colorway = post.Colorway ?? existingPost.Colorway;
+                    existingPost.FK_Brand = post.FK_Brand ?? existingPost.FK_Brand;
+                    existingPost.Image = post.Image ?? existingPost.Image;
+                    existingPost.BrandId = post.BrandId ?? existingPost.BrandId;
                     _context.Posts.Update(existingPost);
                     await _context.SaveChangesAsync();
-                    return Ok("Post updated.");
+                    return Ok(existingPost);
                 }
                 else return NotFound("Post not found.");
             }
@@ -128,6 +159,12 @@ namespace DripGuide.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var post = await _context.Posts.FindAsync(id);
+
+            if(post == null)
+            {
+                return NotFound();
+            }
+
             return Ok(post);
         }
 
@@ -137,7 +174,7 @@ namespace DripGuide.Controllers
         {
             try
             {
-                if(post == null)
+                if(post == null || !await _context.Brands.AnyAsync(e => e.Id == post.BrandId))
                 {
                     return BadRequest();
                 }
@@ -196,7 +233,7 @@ namespace DripGuide.Controllers
             _context.Posts.Remove(post);
             await _context.SaveChangesAsync();
 
-            return Ok("Post removed.");
+            return Ok(post);
         }
     }
 }

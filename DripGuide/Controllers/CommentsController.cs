@@ -37,21 +37,9 @@ namespace DripGuide.Controllers
             return comment;
         }
 
-        // GET: api/Comments/Post
-        [HttpGet("Post/{id}")]
-        public async Task<ActionResult<IEnumerable<Comment>>> GetCommentsByPostId(int id)
-        {
-            if (id == 0)
-            {
-                return NotFound();
-            }
-
-            return await _context.Comments.Where(c => c.PostId == id).ToListAsync();
-        }
-
         // PUT: api/Comments/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, CommentDto commentUpdate)
+        public async Task<IActionResult> Update(int id, CommentUpdateDto commentUpdate)
         {
             var comment = await _context.Comments.FindAsync(id);
 
@@ -60,7 +48,7 @@ namespace DripGuide.Controllers
                 return BadRequest();
             }
 
-            comment.Text = commentUpdate.Text;
+            comment.Text = commentUpdate.Text ?? comment.Text;
             _context.Entry(comment).State = EntityState.Modified;
 
             try
@@ -79,7 +67,7 @@ namespace DripGuide.Controllers
                 }
             }
 
-            return Ok();
+            return Ok(comment);
         }
 
         // POST: api/Comments
@@ -118,7 +106,7 @@ namespace DripGuide.Controllers
             _context.Comments.Remove(comment);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(comment);
         }
 
         private bool CommentExists(int id)
