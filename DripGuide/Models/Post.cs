@@ -15,7 +15,7 @@ namespace DripGuide.Models
 
         public string Price { get; set; }
 
-        public DateTime ReleaseDate { get; set; }
+        public DateTime? ReleaseDate { get; set; }
 
         public string StyleCode { get; set; }
 

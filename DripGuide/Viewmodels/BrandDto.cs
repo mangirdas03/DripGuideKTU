@@ -16,7 +16,7 @@ namespace DripGuide.Viewmodels
         public string Description { get; set; }
 
         [Required]
-        public DateTime EstablishmentDate { get; set; }
+        public DateTime? EstablishmentDate { get; set; }
 
         [Required]
         [StringLength(maximumLength: 50, MinimumLength = 2,

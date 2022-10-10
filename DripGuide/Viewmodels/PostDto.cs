@@ -30,7 +30,7 @@ namespace DripGuide.Viewmodels
         public string Price { get; set; }
 
         [Required]
-        public DateTime ReleaseDate { get; set; }
+        public DateTime? ReleaseDate { get; set; }
 
         [Required]
         [StringLength(maximumLength: 100, MinimumLength = 2,
