@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using DripGuide.Models;
 using DripGuide.Viewmodels;
+using DripGuide.Helpers;
 
 namespace DripGuide.Controllers
 {
@@ -10,10 +11,12 @@ namespace DripGuide.Controllers
     public class BrandsController : ControllerBase
     {
         private readonly DripContext _context;
+        private readonly JwtService _jwtservice;
 
-        public BrandsController(DripContext context)
+        public BrandsController(DripContext context, JwtService jwtservice)
         {
             _context = context;
+            _jwtservice = jwtservice;
         }
 
         // GET: api/Brands
@@ -41,6 +44,10 @@ namespace DripGuide.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, BrandUpdateDto brandUpdate)
         {
+            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], true);
+            if (tokenUser.Error != null)
+                return Unauthorized(tokenUser.Error);
+
             var brand = await _context.Brands.FindAsync(id);
 
             if(brand == null) 
@@ -80,6 +87,10 @@ namespace DripGuide.Controllers
         [HttpPost]
         public async Task<ActionResult<Brand>> AddBrand(BrandDto brand)
         {
+            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], true);
+            if (tokenUser.Error != null)
+                return Unauthorized(tokenUser.Error);
+
             if (brand == null)
             {
                 return BadRequest();
@@ -105,6 +116,10 @@ namespace DripGuide.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBrand(int id)
         {
+            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], true);
+            if (tokenUser.Error != null)
+                return Unauthorized(tokenUser.Error);
+
             var brand = await _context.Brands.FindAsync(id);
 
             if (brand == null)

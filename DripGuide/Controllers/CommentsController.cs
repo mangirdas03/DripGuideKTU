@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using DripGuide.Models;
 using DripGuide.Viewmodels;
+using DripGuide.Helpers;
 
 namespace DripGuide.Controllers
 {
@@ -10,10 +11,12 @@ namespace DripGuide.Controllers
     public class CommentsController : ControllerBase
     {
         private readonly DripContext _context;
+        private readonly JwtService _jwtservice;
 
-        public CommentsController(DripContext context)
+        public CommentsController(DripContext context, JwtService jwtservice)
         {
             _context = context;
+            _jwtservice = jwtservice;
         }
 
         // GET: api/Comments
@@ -41,11 +44,20 @@ namespace DripGuide.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, CommentUpdateDto commentUpdate)
         {
+            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], false);
+            if (tokenUser.Error != null)
+                return Unauthorized(tokenUser.Error);
+
             var comment = await _context.Comments.FindAsync(id);
 
             if (comment == null)
             {
                 return BadRequest();
+            }
+
+            if(comment.User != tokenUser.UserId)
+            {
+                return Unauthorized("You do not have permissions to access this!");
             }
 
             comment.Text = commentUpdate.Text ?? comment.Text;
@@ -74,6 +86,10 @@ namespace DripGuide.Controllers
         [HttpPost]
         public async Task<ActionResult<Comment>> PostComment(CommentDto comment)
         {
+            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], false);
+            if (tokenUser.Error != null)
+                return Unauthorized(tokenUser.Error);
+
             if (comment == null || !await _context.Posts.AnyAsync(e => e.Id == comment.PostId))
             {
                 return BadRequest();
@@ -83,7 +99,7 @@ namespace DripGuide.Controllers
             {
                 Text = comment.Text,
                 PostId = comment.PostId,
-                User = comment.User,
+                User = tokenUser.UserId,
                 SubmitTime = DateTime.Now
             };
 
@@ -97,10 +113,19 @@ namespace DripGuide.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteComment(int id)
         {
+            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], false);
+            if (tokenUser.Error != null)
+                return Unauthorized(tokenUser.Error);
+
             var comment = await _context.Comments.FindAsync(id);
             if (comment == null)
             {
                 return NotFound();
+            }
+
+            if(comment.User != tokenUser.UserId && tokenUser.Role != "admin")
+            {
+                return Unauthorized("You do not have permissions to access this!");
             }
 
             _context.Comments.Remove(comment);
