@@ -23,10 +23,11 @@ namespace DripGuide.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register(RegisterDTO registerdto)
         {
-            var user1 = _context.Users.FirstOrDefault(e => e.Name.Equals(registerdto.Name));
-            var user2 = _context.Users.FirstOrDefault(e => e.Email.Equals(registerdto.Email));
-            if (user1 != null || user2 != null)
+            var sameName = _context.Users.FirstOrDefault(e => e.Name.Equals(registerdto.Name));
+            var sameEmail = _context.Users.FirstOrDefault(e => e.Email.Equals(registerdto.Email));
+            if (sameName != null || sameEmail != null)
                 return Conflict();
+
             var user = new User
             {
                 Name = registerdto.Name,
@@ -44,17 +45,17 @@ namespace DripGuide.Controllers
         [HttpPost("login")]
         public IActionResult Login(LoginDTO logindto)
         {
+            var user = FindUserByName(logindto.Name);
 
-            User user = FindUserByName(logindto.Name);
-
-            if(user == null) return BadRequest("User not found!");
+            if(user == null) 
+                return BadRequest("User not found!");
 
             if (!BCryptNet.Verify(logindto.Password, user.Password))
             {
                 return BadRequest("Invalid credentials!");
             }
 
-            var jwt = _jwtservice.Generate(user.Id);
+            var jwt = _jwtservice.Generate(user.Id, user.Role);
 
             Response.Cookies.Append("jwt", jwt, new CookieOptions
             {
@@ -73,20 +74,16 @@ namespace DripGuide.Controllers
             return _context.Users.FirstOrDefault(e => e.Id == id);
         }
 
-
         [HttpGet("user")]
         public IActionResult GetUser()
         {
             try
             {
-                var jwt = Request.Cookies["jwt"];
-                if (jwt == null)
-                    return Unauthorized();
-                var token = _jwtservice.Verify(jwt);
+                var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], false);
+                if (tokenUser.Error != null)
+                    return Unauthorized(tokenUser.Error);
 
-                int userId = int.Parse(token.Issuer);
-
-                var user = FindUserById(userId);
+                var user = FindUserById(tokenUser.UserId);
 
                 return Ok(user);
             }
@@ -99,105 +96,56 @@ namespace DripGuide.Controllers
         [HttpGet("users/{pageNumber}")]
         public async Task<IActionResult> GetUsers([FromRoute] int pageNumber)
         {
-            try
-            {
-                var jwt = Request.Cookies["jwt"];
-                if (jwt == null)
-                    return Unauthorized();
-                var token = _jwtservice.Verify(jwt);
+            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], true);
+            if (tokenUser.Error != null)
+                return Unauthorized(tokenUser.Error);
 
-                int userId = int.Parse(token.Issuer);
+            int pageCount = 0;
+            int itemsPerPage = 5;
+            pageCount = (int)Math.Ceiling(_context.Users.Where(e => !e.Id.Equals(tokenUser.UserId)).Count() / (decimal)itemsPerPage);
+            //Response.Headers.Add("Page-Count", pageCount.ToString());
 
-                var user = FindUserById(userId);
-                if (user.Role)
-                {
-                    int pageCount = 0;
-                    int itemsPerPage = 5;
-                    pageCount = (int)Math.Ceiling(_context.Users.Where(e => !e.Id.Equals(userId)).Count() / (decimal)itemsPerPage);
-                    //Response.Headers.Add("Page-Count", pageCount.ToString());
-
-                    List<User> users = new List<User>();
-                    users = await _context.Users.Where(e => !e.Id.Equals(userId)).OrderBy(e => e.Id).Skip(itemsPerPage * (pageNumber - 1)).Take(itemsPerPage).ToListAsync();
-                    return Ok(users);
-                }
-
-                return Ok(user);
-            }
-            catch (Exception)
-            {
-                return Unauthorized();
-            }
+            List<User> users = new List<User>();
+            users = await _context.Users.Where(e => !e.Id.Equals(tokenUser.UserId)).OrderBy(e => e.Id).Skip(itemsPerPage * (pageNumber - 1)).Take(itemsPerPage).ToListAsync();
+            return Ok(users);
         }
 
-
-        [HttpPost("changerole/{id}")]
+        [HttpPut("changerole/{id}")]
         public async Task<IActionResult> ChangeRole([FromRoute] int id)
         {
-            try
-            {
-                var jwt = Request.Cookies["jwt"];
-                if (jwt == null)
-                    return Unauthorized();
-                var token = _jwtservice.Verify(jwt);
+            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], true);
+            if (tokenUser.Error != null)
+                return Unauthorized(tokenUser.Error);
 
-                int userId = int.Parse(token.Issuer);
-
-                var user = FindUserById(userId);
-                if (user.Role)
-                {
-                    User selectedUser = await _context.Users.FirstOrDefaultAsync(e => e.Id.Equals(id));
-                    if(selectedUser != null)
-                    {
-                        if (selectedUser.Role)
-                            selectedUser.Role = false;
-                        else selectedUser.Role = true;
-                        _context.Users.Update(selectedUser);
-                        await _context.SaveChangesAsync();
-                        return Ok();
-                    }
-                    return NotFound();
-                }
-                return Unauthorized();
-            }
-            catch (Exception)
+            var selectedUser = await _context.Users.FirstOrDefaultAsync(e => e.Id.Equals(id));
+            if(selectedUser != null)
             {
-                return Unauthorized();
+                if (selectedUser.Role)
+                    selectedUser.Role = false;
+                else selectedUser.Role = true;
+                _context.Users.Update(selectedUser);
+                await _context.SaveChangesAsync();
+                return Ok();
             }
+            return NotFound();
         }
 
-        [HttpPost("deleteuser/{id}")]
+        [HttpDelete("user/{id}")]
         public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
-            try
-            {
-                var jwt = Request.Cookies["jwt"];
-                if (jwt == null)
-                    return Unauthorized();
-                var token = _jwtservice.Verify(jwt);
+            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], true);
+            if (tokenUser.Error != null)
+                return Unauthorized(tokenUser.Error);
 
-                int userId = int.Parse(token.Issuer);
-
-                var user = FindUserById(userId);
-                if (user.Role)
-                {
-                    User selectedUser = await _context.Users.FirstOrDefaultAsync(e => e.Id.Equals(id));
-                    if (selectedUser != null)
-                    {
-                        _context.Users.Remove(selectedUser);
-                        await _context.SaveChangesAsync();
-                        return Ok();
-                    }
-                    return NotFound();
-                }
-                return Unauthorized();
-            }
-            catch (Exception)
+            var selectedUser = await _context.Users.FirstOrDefaultAsync(e => e.Id.Equals(id));
+            if (selectedUser != null)
             {
-                return Unauthorized();
+                _context.Users.Remove(selectedUser);
+                await _context.SaveChangesAsync();
+                return Ok();
             }
+            return NotFound();
         }
-
-
 
         [HttpPost("logout")]
         public IActionResult Logout()
@@ -206,33 +154,23 @@ namespace DripGuide.Controllers
             return Ok("Logged out");
         }
 
-        [HttpPost("changepassword")]
+        [HttpPut("changepassword")]
         public async Task<IActionResult> ChangePassword(PasswordDTO pw)
         {
-            try
+            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], false);
+            if (tokenUser.Error != null)
+                return Unauthorized(tokenUser.Error);
+
+            var user = FindUserById(tokenUser.UserId);
+
+            if(BCryptNet.Verify(pw.currentPass, user.Password) && pw.newPass == pw.newPassConfirm)
             {
-                var jwt = Request.Cookies["jwt"];
-                if (jwt == null)
-                    return Unauthorized();
-                var token = _jwtservice.Verify(jwt);
-
-                int userId = int.Parse(token.Issuer);
-
-                var user = FindUserById(userId);
-
-                if(BCryptNet.Verify(pw.currentPass, user.Password) && pw.newPass == pw.newPassConfirm)
-                {
-                    user.Password = BCryptNet.HashPassword(pw.newPass);
-                    _context.Users.Update(user);
-                    await _context.SaveChangesAsync();
-                    return Ok("Changed.");
-                }
-                else
-                {
-                    return Unauthorized();
-                }
+                user.Password = BCryptNet.HashPassword(pw.newPass);
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+                return Ok("Changed.");
             }
-            catch (Exception)
+            else
             {
                 return Unauthorized();
             }

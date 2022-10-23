@@ -67,6 +67,10 @@ namespace DripGuide.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPending([FromRoute] int pageNumber)
         {
+            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], true);
+            if (tokenUser.Error != null)
+                return Unauthorized(tokenUser.Error);
+
             var posts = new List<Post>();
             var pageCount = 0;
             var itemsPerPage = 8;
@@ -98,60 +102,41 @@ namespace DripGuide.Controllers
             return Ok(comments);
         }
 
-
         // UPDATE ITEM
         [Route("/api/Posts/confirm/{id}")]
         [HttpPut]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] PostUpdateDto post)
         {
-            try
+            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], true);
+            if (tokenUser.Error != null)
+                return Unauthorized(tokenUser.Error);
+
+            if (post == null ||
+                post.BrandId != null && !await _context.Brands.AnyAsync(b => b.Id == post.BrandId))
             {
-                if (post == null)
-                {
-                    return BadRequest();
-                }
-
-                if(post.BrandId != null)
-                {
-                    if (!await _context.Brands.AnyAsync(b => b.Id == post.BrandId))
-                    {
-                        return BadRequest();
-                    }
-                }
-                
-
-                //var jwt = Request.Cookies["jwt"];
-                //if (jwt == null)
-                //    return Unauthorized();
-                //var token = _jwtservice.Verify(jwt);
-
-                var userId = 1; //int.Parse(token.Issuer);
-
-                var existingPost = await _context.Posts.FirstOrDefaultAsync(e => e.Id.Equals(id));
-                if (existingPost != null)
-                {
-                    existingPost.Status = 1;
-                    existingPost.Title = post.Title ?? existingPost.Title;
-                    existingPost.Description = post.Description ?? existingPost.Description;
-                    existingPost.Description2 = post.Description2 ?? existingPost.Description;
-                    existingPost.Price = post.Price ?? existingPost.Price;
-                    existingPost.Material = post.Material ?? existingPost.Material;
-                    existingPost.ReleaseDate = post.ReleaseDate ?? existingPost.ReleaseDate;
-                    existingPost.StyleCode = post.StyleCode ?? existingPost.StyleCode;
-                    existingPost.Colorway = post.Colorway ?? existingPost.Colorway;
-                    existingPost.FK_Brand = post.FK_Brand ?? existingPost.FK_Brand;
-                    existingPost.Image = post.Image ?? existingPost.Image;
-                    existingPost.BrandId = post.BrandId ?? existingPost.BrandId;
-                    _context.Posts.Update(existingPost);
-                    await _context.SaveChangesAsync();
-                    return Ok(existingPost);
-                }
-                else return NotFound("Post not found.");
+                return BadRequest();
             }
-            catch (Exception)
+
+            var existingPost = await _context.Posts.FirstOrDefaultAsync(e => e.Id.Equals(id));
+            if (existingPost != null)
             {
-                return Unauthorized();
+                existingPost.Status = 1;
+                existingPost.Title = post.Title ?? existingPost.Title;
+                existingPost.Description = post.Description ?? existingPost.Description;
+                existingPost.Description2 = post.Description2 ?? existingPost.Description2;
+                existingPost.Price = post.Price ?? existingPost.Price;
+                existingPost.Material = post.Material ?? existingPost.Material;
+                existingPost.ReleaseDate = post.ReleaseDate ?? existingPost.ReleaseDate;
+                existingPost.StyleCode = post.StyleCode ?? existingPost.StyleCode;
+                existingPost.Colorway = post.Colorway ?? existingPost.Colorway;
+                existingPost.FK_Brand = post.FK_Brand ?? existingPost.FK_Brand;
+                existingPost.Image = post.Image ?? existingPost.Image;
+                existingPost.BrandId = post.BrandId ?? existingPost.BrandId;
+                _context.Posts.Update(existingPost);
+                await _context.SaveChangesAsync();
+                return Ok(existingPost);
             }
+            else return NotFound("Post not found.");
         }
 
         // GET ITEM BY ID
@@ -165,6 +150,13 @@ namespace DripGuide.Controllers
                 return NotFound();
             }
 
+            if(post.Status == 0)
+            {
+                var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], true);
+                if (tokenUser.Error != null)
+                    return Unauthorized(tokenUser.Error);
+            }
+
             return Ok(post);
         }
 
@@ -172,57 +164,48 @@ namespace DripGuide.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] PostDto post)
         {
-            try
+            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], false);
+            if (tokenUser.Error != null)
+                return Unauthorized(tokenUser.Error);
+
+            if (post == null || !await _context.Brands.AnyAsync(e => e.Id == post.BrandId))
             {
-                if(post == null || !await _context.Brands.AnyAsync(e => e.Id == post.BrandId))
-                {
-                    return BadRequest();
-                }
-
-                //var jwt = Request.Cookies["jwt"];
-                //if (jwt == null)
-                //    return Unauthorized();
-                //var token = _jwtservice.Verify(jwt);
-
-                var userId = 1; // int.Parse(token.Issuer);
-                //var user = FindUserById(userId);
-
-                var status = 0;
-                //if(user.Role == true)
-                //    status = 1;
-
-                var newPost = new Post
-                {
-                    Title = post.Title,
-                    Description = post.Description,
-                    Description2 = post.Description2,
-                    Material = post.Material,
-                    StyleCode = post.StyleCode,
-                    Colorway = post.Colorway,
-                    ReleaseDate = post.ReleaseDate,
-                    Price = post.Price,
-                    Image = post.Image,
-                    FK_User = userId,
-                    SubmitDate = DateTime.Now,
-                    Status = status,
-                    FK_Brand = post.FK_Brand,
-                    BrandId = post.BrandId
-                };
-                _context.Posts.Add(newPost);
-                await _context.SaveChangesAsync();
-
-                return Created("Created!", newPost);
+                return BadRequest();
             }
-            catch (Exception)
+
+            int status = tokenUser.Role == "admin" ? 1 : 0;
+
+            var newPost = new Post
             {
-                return Unauthorized();
-            }
+                Title = post.Title,
+                Description = post.Description,
+                Description2 = post.Description2,
+                Material = post.Material,
+                StyleCode = post.StyleCode,
+                Colorway = post.Colorway,
+                ReleaseDate = post.ReleaseDate,
+                Price = post.Price,
+                Image = post.Image,
+                FK_User = tokenUser.UserId,
+                SubmitDate = DateTime.Now,
+                Status = status,
+                FK_Brand = post.FK_Brand,
+                BrandId = post.BrandId
+            };
+            _context.Posts.Add(newPost);
+            await _context.SaveChangesAsync();
+
+            return Created("Created!", newPost);
         }
 
         // DELETE ITEM
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
+            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], true);
+            if (tokenUser.Error != null)
+                return Unauthorized(tokenUser.Error);
+
             var post = await _context.Posts.FirstOrDefaultAsync(e => e.Id.Equals(id));
 
             if(post == null)
@@ -235,5 +218,6 @@ namespace DripGuide.Controllers
 
             return Ok(post);
         }
+
     }
 }

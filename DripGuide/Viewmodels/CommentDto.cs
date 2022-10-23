@@ -12,11 +12,6 @@ namespace DripGuide.Viewmodels
         [Required]
         [Range(1, int.MaxValue, 
             ErrorMessage = "Enter a vild digit.")]
-        public int User { get; set; }
-
-        [Required]
-        [Range(1, int.MaxValue, 
-            ErrorMessage = "Enter a vild digit.")]
         public int PostId { get; set; }
     }
 }
