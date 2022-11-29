@@ -26,7 +26,7 @@ namespace DripGuide.Helpers
                     new Claim("Role", role ? "admin" : "user"),
             };
 
-            var payload = new JwtPayload("dripguide", null, claims, null, DateTime.Today.AddDays(7));
+            var payload = new JwtPayload("dripguide", null, claims, null, DateTime.Today.AddDays(1));
             var securityToken = new JwtSecurityToken(header, payload);
 
             return new JwtSecurityTokenHandler().WriteToken(securityToken);

@@ -18,15 +18,13 @@ namespace DripGuide.Viewmodels
         [StringLength(maximumLength: 50, MinimumLength = 5,
             ErrorMessage = "Must be between 5 and 50 characters.")]
         [DataType(DataType.Password)]
-        [Compare("Password",
-            ErrorMessage = "Passwords don't match.")]
         public string newPass { get; set; }
 
         [Required]
         [StringLength(maximumLength: 50, MinimumLength = 5,
             ErrorMessage = "Must be between 5 and 50 characters.")]
         [DataType(DataType.Password)]
-        [Compare("Password",
+        [Compare("newPass",
             ErrorMessage = "Passwords don't match.")]
         public string newPassConfirm { get; set; }
     }

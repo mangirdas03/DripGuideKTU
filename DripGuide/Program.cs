@@ -8,6 +8,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors();
+//AZURE_SQL_CONNECTIONSTRING
 var mySqlConnectionStr = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<DripContext>(options => options.UseSqlServer(mySqlConnectionStr));
 builder.Services.AddControllers();

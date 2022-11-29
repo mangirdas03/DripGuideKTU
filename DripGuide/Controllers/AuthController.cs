@@ -103,7 +103,7 @@ namespace DripGuide.Controllers
             int pageCount = 0;
             int itemsPerPage = 5;
             pageCount = (int)Math.Ceiling(_context.Users.Where(e => !e.Id.Equals(tokenUser.UserId)).Count() / (decimal)itemsPerPage);
-            //Response.Headers.Add("Page-Count", pageCount.ToString());
+            Response.Headers.Add("Page-Count", pageCount.ToString());
 
             List<User> users = new List<User>();
             users = await _context.Users.Where(e => !e.Id.Equals(tokenUser.UserId)).OrderBy(e => e.Id).Skip(itemsPerPage * (pageNumber - 1)).Take(itemsPerPage).ToListAsync();
@@ -155,7 +155,7 @@ namespace DripGuide.Controllers
         }
 
         [HttpPut("changepassword")]
-        public async Task<IActionResult> ChangePassword(PasswordDTO pw)
+        public async Task<IActionResult> ChangePassword([FromBody] PasswordDTO pw)
         {
             var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], false);
             if (tokenUser.Error != null)
