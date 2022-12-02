@@ -67,7 +67,7 @@ naudotoją, pakeisti jo rolę, ištrinti arba redaguoti pasirinktą įrašą.
 ### Sistemos sudedamosios dalys: 
 - Kliento pusė (ang. Front-End) – naudojant React.js.
 - Serverio pusė (angl. Back-End) – naudojant .NET C# Web API su EF Core
-- Duomenų bazė – MySQL (PhpMyAdmin)
+- Duomenų bazė – MSSQL (SSMS)
 
 Žemiau pavaizduota kuriamos sistemos diegimo diagrama. DripGuide sistema yra talpinama 
 Azure serveryje. Sistemos naudotojas gali pasiekti DripGuide jei turi kompiuterį su naršykle, 
