@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import ImageWithFallback from "../components/Image";
+import { SERVER_URL } from "../components/Links";
 
 const Brand = (props : {role: boolean, name: string}) => {
     const navigate = useNavigate();
@@ -41,7 +42,7 @@ const Brand = (props : {role: boolean, name: string}) => {
     useEffect(() => {
         (
             async () => {
-                const response = await fetch('http://localhost:8000/api/Brands/' + id, {
+                const response = await fetch(SERVER_URL + '/Brands/' + id, {
                     method: 'GET',
                     headers: {'Content-Type': 'application/json'},
                     credentials: 'include'

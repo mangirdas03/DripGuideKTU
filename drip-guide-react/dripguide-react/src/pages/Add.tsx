@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import ImageWithFallback from "../components/Image";
+import { SERVER_URL } from "../components/Links";
 
 const Add = (props: {name: string, role: boolean}) => {
     const navigate = useNavigate();
@@ -28,7 +29,7 @@ const Add = (props: {name: string, role: boolean}) => {
     useEffect(() => {
         (
             async () => {
-                const response = await fetch('http://localhost:8000/api/Brands', {
+                const response = await fetch(SERVER_URL + '/Brands', {
                     method: 'GET',
                     headers: {'Content-Type': 'application/json'},
                     credentials: 'include'
@@ -78,7 +79,7 @@ const Add = (props: {name: string, role: boolean}) => {
             if (result.isConfirmed) 
             {
                 const foo = async () => {
-                    const response = await fetch('http://localhost:8000/api/Posts', {
+                    const response = await fetch(SERVER_URL + '/Posts', {
                         method: 'POST',
                         credentials: 'include',
                         headers: {'Content-Type': 'application/json'},

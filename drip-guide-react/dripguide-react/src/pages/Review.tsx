@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import ImageWithFallback from "../components/Image";
+import { SERVER_URL } from "../components/Links";
 
 const Review = (props : any) => {
     const navigate = useNavigate();
@@ -28,7 +29,7 @@ const Review = (props : any) => {
     useEffect(() => {
         (
             async () => {
-                const response = await fetch('http://localhost:8000/api/Posts/' + id, {
+                const response = await fetch(SERVER_URL + '/Posts/' + id, {
                     method: 'GET',
                     headers: {'Content-Type': 'application/json'},
                     credentials: 'include'
@@ -63,7 +64,7 @@ const Review = (props : any) => {
     useEffect(() => {
         (
             async () => {
-                const response = await fetch('http://localhost:8000/api/Brands', {
+                const response = await fetch(SERVER_URL + '/Brands', {
                     method: 'GET',
                     headers: {'Content-Type': 'application/json'},
                     credentials: 'include'
@@ -112,7 +113,7 @@ const Review = (props : any) => {
             if (result.isConfirmed) 
             {
                 const foo = async () => {
-                    const response = await fetch('http://localhost:8000/api/Posts/confirm/' + id, {
+                    const response = await fetch(SERVER_URL + '/Posts/confirm/' + id, {
                         method: 'PUT',
                         headers: {'Content-Type': 'application/json'},
                         credentials: 'include',
@@ -167,7 +168,7 @@ const Review = (props : any) => {
             if (result.isConfirmed) 
             {
                 const foo = async () => {
-                    const response = await fetch('http://localhost:8000/api/Posts/' + id, {
+                    const response = await fetch(SERVER_URL + '/Posts/' + id, {
                     method: 'DELETE',
                     credentials: 'include'
                 });

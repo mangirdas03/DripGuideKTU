@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import ImageWithFallback from "../components/Image";
+import { SERVER_URL } from "../components/Links";
 
 const AddBrand = (props: {name: string, role: boolean}) => {
     const navigate = useNavigate();
@@ -44,7 +45,7 @@ const AddBrand = (props: {name: string, role: boolean}) => {
             if (result.isConfirmed) 
             {
                 const submitBrand = async () => {
-                    const response = await fetch('http://localhost:8000/api/Brands', {
+                    const response = await fetch(SERVER_URL + '/Brands', {
                         method: 'POST',
                         credentials: 'include',
                         headers: {'Content-Type': 'application/json'},

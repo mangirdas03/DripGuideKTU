@@ -2,6 +2,7 @@ import React, {SyntheticEvent, useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import { SERVER_URL } from "../components/Links";
 
 
 const Login = (props: {setName: (name: string) => void}) => {
@@ -29,7 +30,7 @@ const Login = (props: {setName: (name: string) => void}) => {
             return
         }
 
-        const response = await fetch('http://localhost:8000/api/login', {
+        const response = await fetch(SERVER_URL + '/login', {
             method: 'POST',
             credentials: 'include',
             headers: {'Content-Type': 'application/json'},

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 
 import ImageWithFallback from "../components/Image";
+import { SERVER_URL } from "../components/Links";
 
 const Browse = (props: {name: string}) => {
     const navigate = useNavigate();
@@ -24,7 +25,7 @@ const Browse = (props: {name: string}) => {
               setIsLoading(true);
               if(!query){
                 setTitle('🔥 Browsing all drip 🔥');
-                await fetch(`http://localhost:8000/api/Posts/Page/1`).then(async (result) => {
+                await fetch(SERVER_URL + `/Posts/Page/1`).then(async (result) => {
                     res = result;
                     const data = await res.json();
                     setpageCount(Number(res.headers.get('Page-Count')));
@@ -35,7 +36,7 @@ const Browse = (props: {name: string}) => {
               }
               else{
                 setTitle("🔥 Browsing results for \"" + query + "\" 🔥");
-                await fetch(`http://localhost:8000/api/Posts/Page/1/${query}`).then(async (result) => {
+                await fetch(SERVER_URL + `/Posts/Page/1/${query}`).then(async (result) => {
                     res = result;
                     const data = await res.json();
                     setpageCount(Number(res.headers.get('Page-Count')));
@@ -53,10 +54,10 @@ const Browse = (props: {name: string}) => {
     const fetchPosts = async (currentPage : any) => {
         var res;
         if(!query){
-           res = await fetch(`http://localhost:8000/api/Posts/Page/${currentPage}`);
+           res = await fetch(SERVER_URL + `/Posts/Page/${currentPage}`);
         }
         else{
-           res = await fetch(`http://localhost:8000/api/Posts/Page/${currentPage}/${query}`);
+           res = await fetch(SERVER_URL + `/Posts/Page/${currentPage}/${query}`);
         } 
         const data = await res.json();
         return data;

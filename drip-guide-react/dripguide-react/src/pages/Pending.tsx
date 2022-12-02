@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 import { useNavigate } from "react-router-dom";
 import ImageWithFallback from "../components/Image";
+import { SERVER_URL } from "../components/Links";
 
 const Pending = (props: {name: string, role: boolean}) => {
     const navigate = useNavigate();
@@ -15,7 +16,7 @@ const Pending = (props: {name: string, role: boolean}) => {
     useEffect(() => {
         (
             async () => {
-                const response = await fetch('http://localhost:8000/api/Posts/pending/1', {
+                const response = await fetch(SERVER_URL + '/Posts/pending/1', {
                     method: 'GET',
                     headers: {'Content-Type': 'application/json'},
                     credentials: 'include'
@@ -32,7 +33,7 @@ const Pending = (props: {name: string, role: boolean}) => {
     }, []);
 
     const fetchPosts = async (currentPage : any) => {
-        var res = await fetch(`http://localhost:8000/api/Posts/pending/${currentPage}`, {
+        var res = await fetch(SERVER_URL + `/Posts/pending/${currentPage}`, {
             method: 'GET',
             headers: {'Content-Type': 'application/json'},
             credentials: 'include'

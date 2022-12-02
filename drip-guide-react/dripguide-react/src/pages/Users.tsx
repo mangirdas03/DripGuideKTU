@@ -3,7 +3,7 @@ import ReactPaginate from "react-paginate";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import ImageWithFallback from "../components/Image";
+import { SERVER_URL } from "../components/Links";
 
 const Users = (props: {name: string, role: boolean}) => {
     const navigate = useNavigate();
@@ -19,7 +19,7 @@ const Users = (props: {name: string, role: boolean}) => {
     useEffect(() => {
         (
             async () => {
-                const response = await fetch('http://localhost:8000/api/users/1', {
+                const response = await fetch(SERVER_URL + '/users/1', {
                     method: 'GET',
                     headers: {'Content-Type': 'application/json'},
                     credentials: 'include'
@@ -38,7 +38,7 @@ const Users = (props: {name: string, role: boolean}) => {
 
     const changeRole = async (id : number) => {
         const MySwal = withReactContent(Swal)
-        var res = await fetch(`http://localhost:8000/api/changerole/${id}`, {
+        var res = await fetch(SERVER_URL + `/changerole/${id}`, {
             method: 'PUT',
             credentials: 'include'
         });
@@ -77,7 +77,7 @@ const Users = (props: {name: string, role: boolean}) => {
           }).then((result) => {
             if(result.isConfirmed){
                 (async () => {
-                    var res = await fetch(`http://localhost:8000/api/user/${id}`, {
+                    var res = await fetch(SERVER_URL + `/user/${id}`, {
                     method: 'DELETE',
                     credentials: 'include'
                     });
@@ -110,7 +110,7 @@ const Users = (props: {name: string, role: boolean}) => {
 
 
     const fetchUsers = async (currentPage : any) => {
-        var res = await fetch(`http://localhost:8000/api/users/${currentPage}`,
+        var res = await fetch(SERVER_URL + `/users/${currentPage}`,
         {
             method: 'GET',
             headers: {'Content-Type': 'application/json'},

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import ImageWithFallback from "../components/Image";
+import { SERVER_URL } from "../components/Links";
 
 
 const EditBrand = (props : any) => {
@@ -22,7 +23,7 @@ const EditBrand = (props : any) => {
     useEffect(() => {
         (
             async () => {
-                const response = await fetch('http://localhost:8000/api/Brands/' + id, {
+                const response = await fetch(SERVER_URL + '/Brands/' + id, {
                     method: 'GET',
                     headers: {'Content-Type': 'application/json'},
                     credentials: 'include'
@@ -74,7 +75,7 @@ const EditBrand = (props : any) => {
             if (result.isConfirmed) 
             {
                 const confirm = async () => {
-                    const response = await fetch('http://localhost:8000/api/Brands/' + id, {
+                    const response = await fetch(SERVER_URL + '/Brands/' + id, {
                         method: 'PUT',
                         headers: {'Content-Type': 'application/json'},
                         credentials: 'include',
@@ -129,7 +130,7 @@ const EditBrand = (props : any) => {
             if (result.isConfirmed) 
             {
                 const foo = async () => {
-                    const response = await fetch('http://localhost:8000/api/Brands/' + id, {
+                    const response = await fetch(SERVER_URL + '/Brands/' + id, {
                     method: 'DELETE',
                     credentials: 'include'
                 });

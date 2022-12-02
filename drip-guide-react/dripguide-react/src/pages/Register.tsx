@@ -2,6 +2,7 @@ import React, {SyntheticEvent, useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import { SERVER_URL } from "../components/Links";
 
 const Register = () => {
     const [name, setName] = useState('');
@@ -68,7 +69,7 @@ const Register = () => {
                 });
             return
         }
-        const response = await fetch('http://localhost:8000/api/register', {
+        const response = await fetch(SERVER_URL + '/register', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({name, password, email})

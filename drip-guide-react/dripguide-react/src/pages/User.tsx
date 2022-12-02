@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { SERVER_URL } from "../components/Links";
 
 const User = (props: {name: string, role: boolean, mail: string}) => {
     const navigate = useNavigate();
@@ -55,7 +56,7 @@ const User = (props: {name: string, role: boolean, mail: string}) => {
                 });
             return
         }
-        const response = await fetch('http://localhost:8000/api/changepassword', {
+        const response = await fetch(SERVER_URL + '/changepassword', {
             method: 'PUT',
             credentials: 'include',
             headers: {'Content-Type': 'application/json'},

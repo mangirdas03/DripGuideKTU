@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import logo  from '/logo192.png'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import { SERVER_URL } from "./Links";
 
 const Navbar = (props: {role: boolean, setRole: (role: boolean) => void, name: string, setName: (name: string) => void, theme: string, setTheme: (theme: string) => void}) => {
   const [suggest, setSuggest] = useState<any[]>([]);
@@ -44,7 +45,7 @@ const Navbar = (props: {role: boolean, setRole: (role: boolean) => void, name: s
 
 
   const logout = async () =>{
-    await fetch('http://localhost:8000/api/logout', {
+    await fetch(SERVER_URL + '/logout', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           credentials: 'include'
@@ -82,7 +83,7 @@ const Navbar = (props: {role: boolean, setRole: (role: boolean) => void, name: s
     else
     {
       const getPosts = async () => {
-        const res = await fetch(`http://localhost:8000/api/Posts/Suggestions/${e.target.value}`);
+        const res = await fetch(SERVER_URL + `/Posts/Suggestions/${e.target.value}`);
         const data = await res.json();
         setSuggest(data);
       };

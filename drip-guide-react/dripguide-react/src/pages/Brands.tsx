@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import ImageWithFallback from "../components/Image";
+import { SERVER_URL } from "../components/Links";
 
 const Brands = (props: {role: boolean, name: string}) => {
     const navigate = useNavigate();
@@ -15,7 +16,7 @@ const Brands = (props: {role: boolean, name: string}) => {
         (
             async () => {
                 const getBrands = async () => {
-                var res = await fetch(`http://localhost:8000/api/Brands`);
+                var res = await fetch(SERVER_URL + `/Brands`);
                 const data = await res.json();
                 setItems(data);
             };

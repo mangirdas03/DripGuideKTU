@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import ImageWithFallback from "../components/Image";
+import { SERVER_URL } from "../components/Links";
 
 const Item = (props : {role: boolean, name: string}) => {
     const navigate = useNavigate();
@@ -20,6 +21,9 @@ const Item = (props : {role: boolean, name: string}) => {
     const [fK_Brand, setBrand] = useState('');
     const [edit, setEdit] = useState('');
     const [image, setImage] = useState<string | undefined>(undefined);
+
+    const [brandId, setBrandId] = useState('');
+    const [brandName, setBrandName] = useState('');
 
     const [comments, setComments] = useState<any[]>([]);
 
@@ -77,7 +81,7 @@ const Item = (props : {role: boolean, name: string}) => {
                         if (result.isConfirmed) 
                         {
                             const confirm = async () => {
-                                const response = await fetch('http://localhost:8000/api/Comments', {
+                                const response = await fetch(SERVER_URL + '/Comments', {
                                     method: 'POST',
                                     headers: {'Content-Type': 'application/json'},
                                     credentials: 'include',
@@ -152,7 +156,7 @@ const Item = (props : {role: boolean, name: string}) => {
                         if (result.isConfirmed) 
                         {
                             const confirm = async () => {
-                                const response = await fetch('http://localhost:8000/api/Comments/' + commentId, {
+                                const response = await fetch(SERVER_URL + '/Comments/' + commentId, {
                                     method: 'PUT',
                                     headers: {'Content-Type': 'application/json'},
                                     credentials: 'include',
@@ -226,7 +230,7 @@ const Item = (props : {role: boolean, name: string}) => {
             if (result.isConfirmed) 
             {
                 const foo = async () => {
-                    const response = await fetch('http://localhost:8000/api/Comments/' + id, {
+                    const response = await fetch(SERVER_URL + '/Comments/' + id, {
                     method: 'DELETE',
                     credentials: 'include'
                     });
@@ -268,7 +272,7 @@ const Item = (props : {role: boolean, name: string}) => {
     useEffect(() => {
         (
             async () => {
-                const response = await fetch('http://localhost:8000/api/Posts/' + id, {
+                const response = await fetch(SERVER_URL + '/Posts/' + id, {
                     method: 'GET',
                     headers: {'Content-Type': 'application/json'},
                     credentials: 'include'
@@ -290,6 +294,7 @@ const Item = (props : {role: boolean, name: string}) => {
                     setColorway(content.colorway);
                     setBrand(content.fK_Brand);
                     setImage(content.image);
+                    setBrandId(content.brandId);
                     var submit = content.submitDate;
                     submit = submit.replace("T", " ");
                     setEdit(submit);
@@ -299,11 +304,31 @@ const Item = (props : {role: boolean, name: string}) => {
           )();
     }, []);
 
+    useEffect(() => {
+        (async () => {
+            const response = await fetch(SERVER_URL + '/Brands/' + brandId, {
+                method: 'GET',
+                headers: {'Content-Type': 'application/json'},
+                credentials: 'include'
+            });
+            if(response.ok)
+            {
+                const content = await response.json();
+                
+                setBrandName(content.name);
+            }
+            else{
+                setBrandName("Loading...");
+            }
+        })();
+     },[brandId])
+
+
     // fetch comments
     useEffect(() => {
         (
             async () => {
-                const response = await fetch('http://localhost:8000/api/Posts/' + id + "/Comments", {
+                const response = await fetch(SERVER_URL + '/Posts/' + id + "/Comments", {
                     method: 'GET',
                     headers: {'Content-Type': 'application/json'},
                     credentials: 'include'
@@ -338,7 +363,9 @@ const Item = (props : {role: boolean, name: string}) => {
                     </div>
                 </div>
                 <div className="grid-right">
-                    <p className="grid-right-title">Brand, designer:</p>
+                    <p className="grid-right-title">Brand:</p>
+                    <p className="grid-right-text">{brandName}</p>
+                    <p className="grid-right-title">Designer:</p>
                     <p className="grid-right-text">{fK_Brand}</p>
                     <p className="grid-right-title">Item details:</p>
                     <p className="grid-right-text">{description}</p>
@@ -388,7 +415,7 @@ const Item = (props : {role: boolean, name: string}) => {
                             <div className="comment" key={key}>
                                 <div className="comment-header">
                                     <div className="comment-user">
-                                        👤 {comment.userName}
+                                        👤 {comment.userName ? comment.userName : 'Deleted user'}
                                     </div>
                                     <div className="comment-actions">
                                         {props.name === comment.userName && <button className="btn comment-btn" onClick={() => EditComment(comment.id, comment.text)} >✏️</button>}

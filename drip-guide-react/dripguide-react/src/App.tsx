@@ -24,6 +24,7 @@ import EditBrand from './pages/EditBrand';
 import Edit from './pages/Edit';
 import useLocalStorage from 'use-local-storage'
 import Users from './pages/Users';
+import { SERVER_URL } from './components/Links';
 
 function App() {
   const [name, setName] = useState("");
@@ -40,7 +41,7 @@ function App() {
   useEffect( () =>{
       (
         async () => {
-            const response = await fetch('http://localhost:8000/api/user', {
+            const response = await fetch(SERVER_URL + '/user', {
                 headers: {'Content-Type': 'application/json'},
                 credentials: 'include'
             });
