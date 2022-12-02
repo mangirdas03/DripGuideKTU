@@ -1,42 +1,63 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import ReactPaginate from "react-paginate";
-import { useNavigate } from "react-router-dom";
+
 import ImageWithFallback from "../components/Image";
 
-const Pending = (props: {name: string, role: boolean}) => {
+const Browse = (props: {name: string}) => {
     const navigate = useNavigate();
-    const [posts, setPosts] = useState<any[]>([]);
+    const [items, setItems] = useState<any[]>([]);
+    const [title, setTitle] = useState('🔥 Browsing all drip 🔥');
     const [pageCount, setpageCount] = useState(0);  
+    const {query} = useParams();
+    const [isLoading, setIsLoading] = useState(false);  
 
     useEffect(() => {
         window.scrollTo(0, 0)
-    }, [])
-      
-    useEffect(() => {
+      }, [])
+
+    useEffect( () =>{
         (
-            async () => {
-                const response = await fetch('http://localhost:8000/api/Posts/pending/1', {
-                    method: 'GET',
-                    headers: {'Content-Type': 'application/json'},
-                    credentials: 'include'
+          async () => {
+            const getPosts = async () => {
+              var res;
+              setIsLoading(true);
+              if(!query){
+                setTitle('🔥 Browsing all drip 🔥');
+                await fetch(`http://localhost:8000/api/Posts/Page/1`).then(async (result) => {
+                    res = result;
+                    const data = await res.json();
+                    setpageCount(Number(res.headers.get('Page-Count')));
+                    setItems(data);
+                }).finally(() => {
+                    setIsLoading(false)
                 });
-                if(response.ok)
-                {
-                    const content = await response.json();
-                    setpageCount(Number(response.headers.get('Page-Count')));
-                    setPosts(content);
-                }
-                else alert("Error");
-            }
-          )();
-    }, []);
+              }
+              else{
+                setTitle("🔥 Browsing results for \"" + query + "\" 🔥");
+                await fetch(`http://localhost:8000/api/Posts/Page/1/${query}`).then(async (result) => {
+                    res = result;
+                    const data = await res.json();
+                    setpageCount(Number(res.headers.get('Page-Count')));
+                    setItems(data);
+                }).finally(() => {
+                    setIsLoading(false)
+                });
+              } 
+          };
+          getPosts();
+        }
+        )();
+    }, [query]);
 
     const fetchPosts = async (currentPage : any) => {
-        var res = await fetch(`http://localhost:8000/api/Posts/pending/${currentPage}`, {
-            method: 'GET',
-            headers: {'Content-Type': 'application/json'},
-            credentials: 'include'
-        });
+        var res;
+        if(!query){
+           res = await fetch(`http://localhost:8000/api/Posts/Page/${currentPage}`);
+        }
+        else{
+           res = await fetch(`http://localhost:8000/api/Posts/Page/${currentPage}/${query}`);
+        } 
         const data = await res.json();
         return data;
       };
@@ -44,22 +65,22 @@ const Pending = (props: {name: string, role: boolean}) => {
     const handlePageClick = async (data : any) => {
         let currentPage = data.selected + 1;
         const posts = await fetchPosts(currentPage);
-        setPosts(posts);
+        setItems(posts);
 
         window.scrollTo(0, 0)
       };
 
     const ViewDetails = async (post: any) => {
-        navigate('./item/' + post.id);
+        navigate('/browse/item/' + post.id);
     }
 
     return (
         <div className="center-container" data-theme={localStorage.getItem('theme')}>
-            <h1 className="center-text-title">Pending user submissions</h1>
+            <h1 className="center-text-title">{title}</h1>
             <p className="container-text">Press on the item to see full details.</p>
             <div className="cards">
             {
-                posts.map((post, key) => {
+                items.map((post, key) => {
                     return(
                         <a className="card-box" key={key} onClick={() => ViewDetails(post)}>
                             <div className="card-icon">
@@ -80,7 +101,8 @@ const Pending = (props: {name: string, role: boolean}) => {
                 )
             }
             </div>
-            {posts.length ? null : <p>No user submissions found!</p>}
+            {isLoading && <p>Loading items...</p>}
+            {!isLoading && (items.length ? null : <p>No items matching your search...</p>)}
             <ReactPaginate
                 previousLabel={"<"}
                 nextLabel={">"}
@@ -105,4 +127,4 @@ const Pending = (props: {name: string, role: boolean}) => {
     );
 };
 
-export default Pending;
+export default Browse;

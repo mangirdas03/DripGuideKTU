@@ -57,7 +57,7 @@ namespace DripGuide.Controllers
             }
 
             if (posts.Count == 0)
-                return BadRequest();
+                return NoContent();
 
             return Ok(posts);
         }
@@ -84,7 +84,7 @@ namespace DripGuide.Controllers
 
         // GET: api/Comments/Post
         [HttpGet("{id}/Comments")]
-        public async Task<ActionResult<IEnumerable<Comment>>> GetCommentsByPostId(int id)
+        public async Task<ActionResult<IEnumerable<PostCommentDto>>> GetCommentsByPostId(int id)
         {
             var postExists = await _context.Posts.AnyAsync(p => p.Id == id);
             
@@ -99,7 +99,21 @@ namespace DripGuide.Controllers
                 return NoContent();
             }
 
-            return Ok(comments);
+            List<PostCommentDto> commentDtos = new();
+            foreach (var comment in comments)
+            {
+                var user = FindUserById(comment.User);
+                commentDtos.Add(new PostCommentDto
+                {
+                    Id = comment.Id,
+                    Text = comment.Text,
+                    SubmitTime = comment.SubmitTime,
+                    UserId = comment.User,
+                    UserName = user != null ? user.Name : ""
+                });
+            }
+
+            return Ok(commentDtos);
         }
 
         // UPDATE ITEM

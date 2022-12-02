@@ -66,7 +66,7 @@ const Brand = (props : {role: boolean, name: string}) => {
     }, []);
 
     return (
-        <div className="full-container">
+        <div className="brand-container">
             <div className="grid-top">
                 <p className="grid-top-title brand-big">{name}</p>
             </div>

@@ -5,8 +5,8 @@
 }
 
 .container-main{
-  padding-top: 100px;
-  padding-bottom: 100px;
+  padding-top: 90px;
+  padding-bottom: 70px;
   min-height: 110vh;
   background: transparent url('http://assets.iceable.com/img/noise-transparent.png') repeat 0 0;
 }
@@ -321,7 +321,17 @@ ul{
   margin-top: 25px;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: 26vh repeat(2, 1fr) 30vh;
+  grid-template-rows: 23vh repeat(2, 1fr) 30vh;
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
+}
+
+.brand-container{
+  margin: 0 5%;
+  margin-top: 25px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: 20vh repeat(2, 1fr);
   grid-column-gap: 20px;
   grid-row-gap: 20px;
 }
@@ -634,15 +644,15 @@ ul{
 /* GRID */
 .grid-top { 
   grid-area: 1 / 1 / 2 / 6; 
-  padding: 0 10%;
+  padding: 0 5%;
   overflow: hidden;
 }
 
 .grid-left { 
   grid-area: 2 / 1 / 4 / 3; 
   margin: 0 auto;
-  
 }
+
 .grid-right { 
   grid-area: 2 / 3 / 4 / 6; 
   background-color: var(--background2);
@@ -681,7 +691,6 @@ ul{
 }
 
 .grid-top-title{
-  padding-top: 20px;
   font-size: 6vh;
   font-weight: bold;
   margin-bottom: 5px;
@@ -855,9 +864,72 @@ ul{
 
  /* BRAND */
  .brand-big{
-  font-size: 8vh !important;
+  font-size: 8.5vh !important;
 }
 
+.comments {
+  margin-left: 4.5vw;
+  margin-right: 4.5vw;
+  margin-top: 10vh;
+  display: grid;
+  grid-template-columns: auto auto auto;
+}
+
+.comment {
+  margin: 0.5vw;
+  background-color: var(--background2);
+  border-radius: 0.5rem;
+  padding: 3%;
+  padding-left: 4%;
+  padding-bottom: 0;
+  box-shadow: 0 3px 20px 0px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 0 3px 20px 0px rgba(0, 0, 0, 0.4);
+  -webkit-box-shadow: 0 3px 20px 0px rgba(0, 0, 0, 0.4);
+  -o-box-shadow: 0 3px 20px 0px rgba(0, 0, 0, 0.4);
+  -ms-box-shadow: 0 3px 20px 0px rgba(0, 0, 0, 0.4);
+}
+
+.comment-header {
+  height: 27px;
+  margin-bottom: 0.5vw;
+  display: flex;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.comment-user {
+  width: 70%;
+  margin-left: 1.5vw;
+}
+
+.comment-text {
+  margin-right: 1vw;
+  font-size: 14px;
+}
+
+.comment-date {
+  text-align: right;
+  margin-top: 1vw;
+  margin-bottom: 0.5vw;
+  font-size: 14px;
+  
+}
+
+.comment-actions {
+  width: 30%;
+  text-align: right;
+}
+
+.comment-btn {
+  margin: 0px 2px 0px 2px;
+  padding: 0;
+  border: 0;
+}
+
+.comments-addnew {
+  margin-top: 5vh;
+  text-align: center;
+}
 
 /* RESPONSIVENESS */
 
@@ -875,6 +947,10 @@ ul{
     display: grid;
     grid-template-columns: auto auto auto;
     
+  }
+
+  .comments {
+    grid-template-columns: auto auto;
   }
 }
 @media screen and (max-width: 880px) {
@@ -903,10 +979,13 @@ ul{
   }
 
 }
-@media screen and (max-width: 620px) {
+@media screen and (max-width: 640px) {
   .cards {
     margin: 0 auto;
     display: grid;
+    grid-template-columns: auto;
+  }
+  .comments {
     grid-template-columns: auto;
   }
 

@@ -18,6 +18,7 @@ const Review = (props : any) => {
     const [FK_Brand, setBrand] = useState('');
     const [image, setImage] = useState('');
     const [brandId, setBrandId] = useState('');
+    const [selectBrands, setSelectBrands] = useState<any[]>([]);
 
     useEffect(() => {
         window.scrollTo(0, 0)
@@ -57,6 +58,33 @@ const Review = (props : any) => {
             }
           )();
     }, []);
+
+    // brands
+    useEffect(() => {
+        (
+            async () => {
+                const response = await fetch('http://localhost:8000/api/Brands', {
+                    method: 'GET',
+                    headers: {'Content-Type': 'application/json'},
+                    credentials: 'include'
+                });
+                if(response.status === 200)
+                {
+                    const content = await response.json();
+                    if(content.status === 0){
+                        navigate('/browse/all');
+                        window.location.reload();
+                    }
+                    setSelectBrands(content);
+                }
+                else alert("Error");
+            }
+          )();
+    }, []);
+
+    const HandleSelectedBrand = (e : any) =>{
+        setBrandId(e.target.value);
+    }
 
     const ConfirmPost = async (e : SyntheticEvent) => {
         const MySwal = withReactContent(Swal)
@@ -207,9 +235,10 @@ const Review = (props : any) => {
                     <form onSubmit={ConfirmPost}>
                         <div className="auth-element">
                             <p className="auth-element-label">◾ Brand <b title="Required" className="auth-required">*</b></p>
-                            <input type="number" className="auth-input" placeholder="Brand"
-                                value={brandId} onChange={e => setBrandId(e.target.value)}
-                            />
+                            <select onChange={HandleSelectedBrand} value={brandId} className="auth-input"> 
+                                <option value=""> -- Select a brand -- </option>
+                                {selectBrands.map((brand) => <option value={brand.id}>{brand.name}</option>)}
+                            </select>
                         </div>
                         <div className="auth-element">
                             <p className="auth-element-label">◾ Item title <b title="Required" className="auth-required">*</b></p>

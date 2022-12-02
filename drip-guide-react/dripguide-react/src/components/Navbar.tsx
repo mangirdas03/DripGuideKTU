@@ -194,7 +194,7 @@ const Navbar = (props: {role: boolean, setRole: (role: boolean) => void, name: s
     }
 
     return (
-            <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+            <nav className="navbar navbar-expand-xl navbar-dark fixed-top bg-dark">
         <div className="container-fluid">
           <a className="navbar-brand-container" href="/"><img className="navbar-brand" src={'/dglogo.png'}/></a> 
           {/* <img src={window.location.origin + '/yourPathHere.jpg'} /> */}
@@ -227,15 +227,12 @@ const Navbar = (props: {role: boolean, setRole: (role: boolean) => void, name: s
             <div className="darkmode-switch">
               <input type="checkbox" className="checkbox" id="checkbox" onClick={switchTheme} defaultChecked={checkBoxState()}></input>
                 <label htmlFor="checkbox" className="label">
-                  {/* <i className="fas fa-moon"></i> */}
-                  {/* <i className='fas fa-sun'></i> */}
                   <div className="moon">🌙</div>
                   <div className="sun">☀️</div>
                   <div className='cover'></div>
               </label>
             </div>
               
-            {/* {props.name && <div className="nav-name">Welcome {props.name}!</div>} */}
             {right}
           </div>
         </div>

@@ -44,10 +44,12 @@ function App() {
                 headers: {'Content-Type': 'application/json'},
                 credentials: 'include'
             });
-            const content = await response.json();
-            setName(content.name);
-            setRole(content.role);
-            setMail(content.email);
+            if(response.status === 200){
+              const content = await response.json();
+              setName(content.name);
+              setRole(content.role);
+              setMail(content.email);
+            }
         }
       )();
   });
@@ -145,7 +147,7 @@ function App() {
       </BrowserRouter>
 
       <div className='footer'>
-      <a href='https://ktu.edu/' target="_blank" className="footer-left"><strong>&copy; 2022 KTU</strong></a>
+        <a href='https://ktu.edu/' target="_blank" className="footer-left"><strong>&copy; 2022 KTU</strong></a>
         <div className="footer-center">
           <a href='https://www.google.com/' target="_blank" className="fa fa-google"></a>
           <a href='https://www.facebook.com/' target="_blank" className="fa fa-facebook"></a>
