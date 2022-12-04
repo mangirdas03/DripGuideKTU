@@ -40,6 +40,8 @@ const Login = (props: {setName: (name: string) => void}) => {
         {
             const content = await response.json();
             props.setName(content.name);
+            let jsonToken = JSON.stringify(content.token);
+            localStorage.setItem('jwt', jsonToken)
             MySwal.fire({
             icon: 'success',
             title: <p>Successfully logged in!</p>,
@@ -49,9 +51,6 @@ const Login = (props: {setName: (name: string) => void}) => {
             timer: 1200,
             color: 'white',
             background: '#3e4956',
-            //didOpen: () => {
-                //MySwal.clickConfirm()
-            //}
             }).then(() =>{
                 navigate('/user');
             })

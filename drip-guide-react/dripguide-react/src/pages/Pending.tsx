@@ -16,9 +16,10 @@ const Pending = (props: {name: string, role: boolean}) => {
     useEffect(() => {
         (
             async () => {
+                let jwt = JSON.parse(localStorage.getItem('jwt') || "");
                 const response = await fetch(SERVER_URL + '/Posts/pending/1', {
                     method: 'GET',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: {'Content-Type': 'application/json', 'Authorization': jwt},
                     credentials: 'include'
                 });
                 if(response.ok)
@@ -33,9 +34,10 @@ const Pending = (props: {name: string, role: boolean}) => {
     }, []);
 
     const fetchPosts = async (currentPage : any) => {
+        let jwt = JSON.parse(localStorage.getItem('jwt') || "");
         var res = await fetch(SERVER_URL + `/Posts/pending/${currentPage}`, {
             method: 'GET',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': jwt},
             credentials: 'include'
         });
         const data = await res.json();

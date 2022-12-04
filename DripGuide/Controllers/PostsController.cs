@@ -67,7 +67,7 @@ namespace DripGuide.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPending([FromRoute] int pageNumber)
         {
-            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], true);
+            var tokenUser = _jwtservice.ParseUser(Request.Headers["Authorization"], true);
             if (tokenUser.Error != null)
                 return Unauthorized(tokenUser.Error);
 
@@ -121,7 +121,7 @@ namespace DripGuide.Controllers
         [HttpPut]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] PostUpdateDto post)
         {
-            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], true);
+            var tokenUser = _jwtservice.ParseUser(Request.Headers["Authorization"], true);
             if (tokenUser.Error != null)
                 return Unauthorized(tokenUser.Error);
 
@@ -166,7 +166,7 @@ namespace DripGuide.Controllers
 
             if(post.Status == 0)
             {
-                var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], true);
+                var tokenUser = _jwtservice.ParseUser(Request.Headers["Authorization"], true);
                 if (tokenUser.Error != null)
                     return Unauthorized(tokenUser.Error);
             }
@@ -178,7 +178,7 @@ namespace DripGuide.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] PostDto post)
         {
-            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], false);
+            var tokenUser = _jwtservice.ParseUser(Request.Headers["Authorization"], false);
             if (tokenUser.Error != null)
                 return Unauthorized(tokenUser.Error);
 
@@ -216,7 +216,7 @@ namespace DripGuide.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], true);
+            var tokenUser = _jwtservice.ParseUser(Request.Headers["Authorization"], true);
             if (tokenUser.Error != null)
                 return Unauthorized(tokenUser.Error);
 

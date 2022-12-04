@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo  from '/logo192.png'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { SERVER_URL } from "./Links";
@@ -9,8 +8,6 @@ const Navbar = (props: {role: boolean, setRole: (role: boolean) => void, name: s
   const [suggest, setSuggest] = useState<any[]>([]);
   const [input, setInput] = useState("");
   const navigate = useNavigate();
-
-  //const [nm, setNm] = useState(false);
 
 
   const switchTheme = () => {
@@ -21,56 +18,25 @@ const Navbar = (props: {role: boolean, setRole: (role: boolean) => void, name: s
     if(props.theme === 'light') return false
     return true
   }
-
-
-  // useEffect(() => {
-  //   async function getUser() {
-  //      var response = await fetch('http://localhost:8000/api/user', {
-  //         headers: {'Content-Type': 'application/json'},
-  //         credentials: 'include'
-  //     });
-  //     const content = await response.json();
-  //     setNm(content.role)
-  //     console.log("ROLE:"+props.role)
-  //     //await console.log("ROLE: " + nm)
-  //     // console.log(props.name)
-  //     // if(!content.name || content.role == false)
-  //     // {
-  //     //   navigate('/');
-  //     // }
-  //   }
-  //   getUser();
-
-  // })
-
-
+  
   const logout = async () =>{
-    await fetch(SERVER_URL + '/logout', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          credentials: 'include'
+    localStorage.removeItem('jwt');
+    props.setName("")
+    props.setRole(false)
+    const MySwal = withReactContent(Swal)
+    MySwal.fire({
+      icon: 'success',
+      title: <p>Successfully logged out!</p>,
+      showConfirmButton: false,
+      showCancelButton: false,
+      showCloseButton: false,
+      timer: 1200,
+      color: 'white',
+      background: '#3e4956',
+      confirmButtonColor: 'lightblue'
+      }).then(() =>{
+          navigate('/login');
       });
-      props.setName("")
-      props.setRole(false)
-      const MySwal = withReactContent(Swal)
-      MySwal.fire({
-        icon: 'success',
-        title: <p>Successfully logged out!</p>,
-        showConfirmButton: false,
-        showCancelButton: false,
-        showCloseButton: false,
-        timer: 1200,
-        color: 'white',
-        background: '#3e4956',
-        confirmButtonColor: 'lightblue'
-        //didOpen: () => {
-            //MySwal.clickConfirm()
-        //}
-        }).then(() =>{
-            navigate('/login');
-        })
-      //localStorage.setItem("logged_user", 'false');
-      //localStorage.setItem("admin", 'false');
   }
 
   const changeHandler = (e : any) => {

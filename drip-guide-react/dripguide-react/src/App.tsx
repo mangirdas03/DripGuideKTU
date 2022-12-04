@@ -41,15 +41,20 @@ function App() {
   useEffect( () =>{
       (
         async () => {
-            const response = await fetch(SERVER_URL + '/user', {
-                headers: {'Content-Type': 'application/json'},
+            let jsonToken = localStorage.getItem('jwt');
+            let jwt = "";
+            if(jsonToken){
+              jwt = JSON.parse(jsonToken);
+              const response = await fetch(SERVER_URL + '/user', {
+                headers: {'Content-Type': 'application/json', 'Authorization': jwt},
                 credentials: 'include'
-            });
-            if(response.status === 200){
-              const content = await response.json();
-              setName(content.name);
-              setRole(content.role);
-              setMail(content.email);
+              });
+              if(response.status === 200){
+                const content = await response.json();
+                setName(content.name);
+                setRole(content.role);
+                setMail(content.email);
+              }
             }
         }
       )();

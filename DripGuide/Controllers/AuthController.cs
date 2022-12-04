@@ -56,15 +56,9 @@ namespace DripGuide.Controllers
             }
 
             var jwt = _jwtservice.Generate(user.Id, user.Role);
+            var auth = new TokenDto { Name = user.Name, Role = user.Role, Token = jwt };
 
-            Response.Cookies.Append("jwt", jwt, new CookieOptions
-            {
-                HttpOnly = true,
-                SameSite  = SameSiteMode.None,
-                Secure = true
-            });
-
-            return Ok(user);
+            return Ok(auth);
         }
 
         private User FindUserByName(string name)
@@ -81,7 +75,7 @@ namespace DripGuide.Controllers
         {
             try
             {
-                var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], false);
+                var tokenUser = _jwtservice.ParseUser(Request.Headers["Authorization"], false);
                 if (tokenUser.Error != null)
                     return Unauthorized(tokenUser.Error);
 
@@ -98,7 +92,7 @@ namespace DripGuide.Controllers
         [HttpGet("users/{pageNumber}")]
         public async Task<IActionResult> GetUsers([FromRoute] int pageNumber)
         {
-            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], true);
+            var tokenUser = _jwtservice.ParseUser(Request.Headers["Authorization"], true);
             if (tokenUser.Error != null)
                 return Unauthorized(tokenUser.Error);
 
@@ -115,7 +109,7 @@ namespace DripGuide.Controllers
         [HttpPut("changerole/{id}")]
         public async Task<IActionResult> ChangeRole([FromRoute] int id)
         {
-            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], true);
+            var tokenUser = _jwtservice.ParseUser(Request.Headers["Authorization"], true);
             if (tokenUser.Error != null)
                 return Unauthorized(tokenUser.Error);
 
@@ -135,7 +129,7 @@ namespace DripGuide.Controllers
         [HttpDelete("user/{id}")]
         public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
-            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], true);
+            var tokenUser = _jwtservice.ParseUser(Request.Headers["Authorization"], true);
             if (tokenUser.Error != null)
                 return Unauthorized(tokenUser.Error);
 
@@ -164,7 +158,7 @@ namespace DripGuide.Controllers
         [HttpPut("changepassword")]
         public async Task<IActionResult> ChangePassword([FromBody] PasswordDTO pw)
         {
-            var tokenUser = _jwtservice.ParseUser(Request.Cookies["jwt"], false);
+            var tokenUser = _jwtservice.ParseUser(Request.Headers["Authorization"], false);
             if (tokenUser.Error != null)
                 return Unauthorized(tokenUser.Error);
 

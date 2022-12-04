@@ -19,9 +19,10 @@ const Users = (props: {name: string, role: boolean}) => {
     useEffect(() => {
         (
             async () => {
+                let jwt = JSON.parse(localStorage.getItem('jwt') || "");
                 const response = await fetch(SERVER_URL + '/users/1', {
                     method: 'GET',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: {'Content-Type': 'application/json', 'Authorization': jwt},
                     credentials: 'include'
                 });
                 if(response.ok)
@@ -38,9 +39,11 @@ const Users = (props: {name: string, role: boolean}) => {
 
     const changeRole = async (id : number) => {
         const MySwal = withReactContent(Swal)
+        let jwt = JSON.parse(localStorage.getItem('jwt') || "");
         var res = await fetch(SERVER_URL + `/changerole/${id}`, {
             method: 'PUT',
-            credentials: 'include'
+            credentials: 'include',
+            headers: {'Content-Type': 'application/json', 'Authorization': jwt}
         });
         if(res.ok){
             MySwal.fire({
@@ -77,9 +80,11 @@ const Users = (props: {name: string, role: boolean}) => {
           }).then((result) => {
             if(result.isConfirmed){
                 (async () => {
+                    let jwt = JSON.parse(localStorage.getItem('jwt') || "");
                     var res = await fetch(SERVER_URL + `/user/${id}`, {
                     method: 'DELETE',
-                    credentials: 'include'
+                    credentials: 'include',
+                    headers: {'Content-Type': 'application/json', 'Authorization': jwt}
                     });
                     if(res.ok){
                         MySwal.fire({
@@ -110,10 +115,11 @@ const Users = (props: {name: string, role: boolean}) => {
 
 
     const fetchUsers = async (currentPage : any) => {
+        let jwt = JSON.parse(localStorage.getItem('jwt') || "");
         var res = await fetch(SERVER_URL + `/users/${currentPage}`,
         {
             method: 'GET',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': jwt},
             credentials: 'include'
         });
         const data = await res.json();

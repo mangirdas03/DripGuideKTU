@@ -29,9 +29,10 @@ const Review = (props : any) => {
     useEffect(() => {
         (
             async () => {
+                let jwt = JSON.parse(localStorage.getItem('jwt') || "");
                 const response = await fetch(SERVER_URL + '/Posts/' + id, {
                     method: 'GET',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: {'Content-Type': 'application/json', 'Authorization': jwt},
                     credentials: 'include'
                 });
                 if(response.ok)
@@ -64,9 +65,10 @@ const Review = (props : any) => {
     useEffect(() => {
         (
             async () => {
+                let jwt = JSON.parse(localStorage.getItem('jwt') || "");
                 const response = await fetch(SERVER_URL + '/Brands', {
                     method: 'GET',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: {'Content-Type': 'application/json', 'Authorization': jwt},
                     credentials: 'include'
                 });
                 if(response.status === 200)
@@ -113,9 +115,10 @@ const Review = (props : any) => {
             if (result.isConfirmed) 
             {
                 const foo = async () => {
+                    let jwt = JSON.parse(localStorage.getItem('jwt') || "");
                     const response = await fetch(SERVER_URL + '/Posts/confirm/' + id, {
                         method: 'PUT',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: {'Content-Type': 'application/json', 'Authorization': jwt},
                         credentials: 'include',
                         body: JSON.stringify({title, description, description2, material, price, releasedate, stylecode, colorway, FK_Brand, image, brandId})
                     });
@@ -168,9 +171,11 @@ const Review = (props : any) => {
             if (result.isConfirmed) 
             {
                 const foo = async () => {
+                    let jwt = JSON.parse(localStorage.getItem('jwt') || "");
                     const response = await fetch(SERVER_URL + '/Posts/' + id, {
                     method: 'DELETE',
-                    credentials: 'include'
+                    credentials: 'include',
+                    headers: {'Authorization': jwt}
                 });
                 if(response.ok)
                 {

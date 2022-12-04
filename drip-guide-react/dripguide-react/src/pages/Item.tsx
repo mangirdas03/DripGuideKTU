@@ -81,9 +81,10 @@ const Item = (props : {role: boolean, name: string}) => {
                         if (result.isConfirmed) 
                         {
                             const confirm = async () => {
+                                let jwt = JSON.parse(localStorage.getItem('jwt') || "");
                                 const response = await fetch(SERVER_URL + '/Comments', {
                                     method: 'POST',
-                                    headers: {'Content-Type': 'application/json'},
+                                    headers: {'Content-Type': 'application/json', 'Authorization': jwt},
                                     credentials: 'include',
                                     body: JSON.stringify({text, postId})
                                 });
@@ -156,9 +157,10 @@ const Item = (props : {role: boolean, name: string}) => {
                         if (result.isConfirmed) 
                         {
                             const confirm = async () => {
+                                let jwt = JSON.parse(localStorage.getItem('jwt') || "");
                                 const response = await fetch(SERVER_URL + '/Comments/' + commentId, {
                                     method: 'PUT',
-                                    headers: {'Content-Type': 'application/json'},
+                                    headers: {'Content-Type': 'application/json', 'Authorization': jwt},
                                     credentials: 'include',
                                     body: JSON.stringify({text})
                                 });
@@ -230,9 +232,11 @@ const Item = (props : {role: boolean, name: string}) => {
             if (result.isConfirmed) 
             {
                 const foo = async () => {
+                    let jwt = JSON.parse(localStorage.getItem('jwt') || "");
                     const response = await fetch(SERVER_URL + '/Comments/' + id, {
                     method: 'DELETE',
-                    credentials: 'include'
+                    credentials: 'include',
+                    headers: {'Authorization': jwt}
                     });
                     if(response.ok)
                     {
@@ -272,9 +276,10 @@ const Item = (props : {role: boolean, name: string}) => {
     useEffect(() => {
         (
             async () => {
+                let jwt = JSON.parse(localStorage.getItem('jwt') || "");
                 const response = await fetch(SERVER_URL + '/Posts/' + id, {
                     method: 'GET',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: {'Content-Type': 'application/json', 'Authorization': jwt},
                     credentials: 'include'
                 });
                 if(response.ok)
@@ -306,9 +311,10 @@ const Item = (props : {role: boolean, name: string}) => {
 
     useEffect(() => {
         (async () => {
+            let jwt = JSON.parse(localStorage.getItem('jwt') || "");
             const response = await fetch(SERVER_URL + '/Brands/' + brandId, {
                 method: 'GET',
-                headers: {'Content-Type': 'application/json'},
+                headers: {'Content-Type': 'application/json', 'Authorization': jwt},
                 credentials: 'include'
             });
             if(response.ok)
@@ -328,9 +334,10 @@ const Item = (props : {role: boolean, name: string}) => {
     useEffect(() => {
         (
             async () => {
+                let jwt = JSON.parse(localStorage.getItem('jwt') || "");
                 const response = await fetch(SERVER_URL + '/Posts/' + id + "/Comments", {
                     method: 'GET',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: {'Content-Type': 'application/json', 'Authorization': jwt},
                     credentials: 'include'
                 });
                 if(response.status === 200)

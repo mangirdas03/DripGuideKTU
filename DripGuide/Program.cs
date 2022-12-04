@@ -8,9 +8,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors();
-//AZURE_SQL_CONNECTIONSTRING
-var mySqlConnectionStr = builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
-builder.Services.AddDbContext<DripContext>(options => options.UseSqlServer(mySqlConnectionStr));
+var azureSqlConnectionStr = builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+var localSqlConnectionStr = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<DripContext>(options => options.UseSqlServer(azureSqlConnectionStr));
 builder.Services.AddControllers();
 builder.Services.AddScoped<JwtService>();
 

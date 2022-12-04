@@ -29,9 +29,10 @@ const Add = (props: {name: string, role: boolean}) => {
     useEffect(() => {
         (
             async () => {
+                let jwt = JSON.parse(localStorage.getItem('jwt') || "");
                 const response = await fetch(SERVER_URL + '/Brands', {
                     method: 'GET',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: {'Content-Type': 'application/json', 'Authorization': jwt},
                     credentials: 'include'
                 });
                 if(response.status === 200)
@@ -79,10 +80,11 @@ const Add = (props: {name: string, role: boolean}) => {
             if (result.isConfirmed) 
             {
                 const foo = async () => {
+                    let jwt = JSON.parse(localStorage.getItem('jwt') || "");
                     const response = await fetch(SERVER_URL + '/Posts', {
                         method: 'POST',
                         credentials: 'include',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: {'Content-Type': 'application/json', 'Authorization': jwt},
                         body: JSON.stringify({title, description, description2, material, price, releaseDate, styleCode, colorway, fK_Brand, image, brandId})
                     });
                     if(response.ok)

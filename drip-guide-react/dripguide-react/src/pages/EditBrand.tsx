@@ -23,9 +23,10 @@ const EditBrand = (props : any) => {
     useEffect(() => {
         (
             async () => {
+                let jwt = JSON.parse(localStorage.getItem('jwt') || "");
                 const response = await fetch(SERVER_URL + '/Brands/' + id, {
                     method: 'GET',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: {'Content-Type': 'application/json', 'Authorization': jwt},
                     credentials: 'include'
                 });
                 if(response.ok)
@@ -75,9 +76,10 @@ const EditBrand = (props : any) => {
             if (result.isConfirmed) 
             {
                 const confirm = async () => {
+                    let jwt = JSON.parse(localStorage.getItem('jwt') || "");
                     const response = await fetch(SERVER_URL + '/Brands/' + id, {
                         method: 'PUT',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: {'Content-Type': 'application/json', 'Authorization': jwt},
                         credentials: 'include',
                         body: JSON.stringify({name, description, founder, establishmentDate, headquarters, image})
                     });
@@ -130,9 +132,11 @@ const EditBrand = (props : any) => {
             if (result.isConfirmed) 
             {
                 const foo = async () => {
+                    let jwt = JSON.parse(localStorage.getItem('jwt') || "");
                     const response = await fetch(SERVER_URL + '/Brands/' + id, {
                     method: 'DELETE',
-                    credentials: 'include'
+                    credentials: 'include',
+                    headers: {'Authorization': jwt}
                 });
                 if(response.ok)
                 {

@@ -56,10 +56,11 @@ const User = (props: {name: string, role: boolean, mail: string}) => {
                 });
             return
         }
+        let jwt = JSON.parse(localStorage.getItem('jwt') || "");
         const response = await fetch(SERVER_URL + '/changepassword', {
             method: 'PUT',
             credentials: 'include',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': jwt},
             body: JSON.stringify({currentPass, newPass, newPassConfirm})
         });
         if(response.ok)

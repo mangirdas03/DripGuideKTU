@@ -45,10 +45,11 @@ const AddBrand = (props: {name: string, role: boolean}) => {
             if (result.isConfirmed) 
             {
                 const submitBrand = async () => {
+                    let jwt = JSON.parse(localStorage.getItem('jwt') || "");
                     const response = await fetch(SERVER_URL + '/Brands', {
                         method: 'POST',
                         credentials: 'include',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: {'Content-Type': 'application/json', 'Authorization': jwt},
                         body: JSON.stringify({name, description, headquarters, founder, establishmentDate, image})
                     });
                     if(response.ok)
