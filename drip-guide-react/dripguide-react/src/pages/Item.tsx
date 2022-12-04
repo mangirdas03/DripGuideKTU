@@ -418,8 +418,8 @@ const Item = (props : {role: boolean, name: string}) => {
                                         👤 {comment.userName ? comment.userName : 'Deleted user'}
                                     </div>
                                     <div className="comment-actions">
-                                        {props.name === comment.userName && <button className="btn comment-btn" onClick={() => EditComment(comment.id, comment.text)} >✏️</button>}
-                                        {(props.role || props.name === comment.userName) && <button className="btn comment-btn" onClick={() => DeleteComment(comment.id)} >❌</button>}
+                                        {props.name === comment.userName && comment.userName && <button className="btn comment-btn" onClick={() => EditComment(comment.id, comment.text)} >✏️</button>}
+                                        {(props.role || props.name === comment.userName) && comment.userName && <button className="btn comment-btn" onClick={() => DeleteComment(comment.id)} >❌</button>}
                                     </div>
                                 </div>
                                 <div className="comment-text">{comment.text}</div>

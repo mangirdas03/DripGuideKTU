@@ -9,7 +9,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors();
 //AZURE_SQL_CONNECTIONSTRING
-var mySqlConnectionStr = builder.Configuration.GetConnectionString("DefaultConnection");
+var mySqlConnectionStr = builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
 builder.Services.AddDbContext<DripContext>(options => options.UseSqlServer(mySqlConnectionStr));
 builder.Services.AddControllers();
 builder.Services.AddScoped<JwtService>();
@@ -25,7 +25,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors(options => options
-    .WithOrigins(new[] { "http://localhost:3000" })
+    .WithOrigins(new[] { "https://dripguidektu.azurewebsites.net", "http://localhost:3000" })
     .AllowAnyHeader()
     .AllowAnyMethod()
     .AllowCredentials().WithExposedHeaders("Page-Count")
