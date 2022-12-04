@@ -276,7 +276,11 @@ const Item = (props : {role: boolean, name: string}) => {
     useEffect(() => {
         (
             async () => {
-                let jwt = JSON.parse(localStorage.getItem('jwt') || "");
+                let jsonToken = localStorage.getItem('jwt');
+                let jwt = "";
+                if(jsonToken){
+                  jwt = JSON.parse(jsonToken);
+                }
                 const response = await fetch(SERVER_URL + '/Posts/' + id, {
                     method: 'GET',
                     headers: {'Content-Type': 'application/json', 'Authorization': jwt},
@@ -311,7 +315,11 @@ const Item = (props : {role: boolean, name: string}) => {
 
     useEffect(() => {
         (async () => {
-            let jwt = JSON.parse(localStorage.getItem('jwt') || "");
+            let jsonToken = localStorage.getItem('jwt');
+            let jwt = "";
+            if(jsonToken){
+                jwt = JSON.parse(jsonToken);
+            }
             const response = await fetch(SERVER_URL + '/Brands/' + brandId, {
                 method: 'GET',
                 headers: {'Content-Type': 'application/json', 'Authorization': jwt},
@@ -334,7 +342,11 @@ const Item = (props : {role: boolean, name: string}) => {
     useEffect(() => {
         (
             async () => {
-                let jwt = JSON.parse(localStorage.getItem('jwt') || "");
+                let jsonToken = localStorage.getItem('jwt');
+                let jwt = "";
+                if(jsonToken){
+                  jwt = JSON.parse(jsonToken);
+                }
                 const response = await fetch(SERVER_URL + '/Posts/' + id + "/Comments", {
                     method: 'GET',
                     headers: {'Content-Type': 'application/json', 'Authorization': jwt},
@@ -426,7 +438,7 @@ const Item = (props : {role: boolean, name: string}) => {
                                     </div>
                                     <div className="comment-actions">
                                         {props.name === comment.userName && comment.userName && <button className="btn comment-btn" onClick={() => EditComment(comment.id, comment.text)} >✏️</button>}
-                                        {(props.role || props.name === comment.userName) && comment.userName && <button className="btn comment-btn" onClick={() => DeleteComment(comment.id)} >❌</button>}
+                                        {(props.role || props.name === comment.userName) && props.name && <button className="btn comment-btn" onClick={() => DeleteComment(comment.id)} >❌</button>}
                                     </div>
                                 </div>
                                 <div className="comment-text">{comment.text}</div>
